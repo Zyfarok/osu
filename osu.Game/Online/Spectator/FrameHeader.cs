@@ -45,6 +45,18 @@ namespace osu.Game.Online.Spectator
         public DateTimeOffset ReceivedTime { get; set; }
 
         /// <summary>
+        /// TODO : ...
+        /// </summary>
+        [Key(5)]
+        public long SectionBaseScore { get; set; }
+
+        /// <summary>
+        /// TODO : ...
+        /// </summary>
+        [Key(6)]
+        public double ComboScore { get; set; }
+
+        /// <summary>
         /// Construct header summary information from a point-in-time reference to a score which is actively being played.
         /// </summary>
         /// <param name="score">The score for reference.</param>
