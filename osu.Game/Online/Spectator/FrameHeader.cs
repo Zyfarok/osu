@@ -45,14 +45,21 @@ namespace osu.Game.Online.Spectator
         public DateTimeOffset ReceivedTime { get; set; }
 
         /// <summary>
-        /// TODO : ...
+        /// A given combo section is defined as the section in which the combo has not been broken.
+        /// In other words: combo sections are sections which are in between combo breaks, beginning of the play, and, or end of the play.
+        /// </summary>
+        /// <summary>
+        /// The sum of all base Judgements in the current combo section.
         /// </summary>
         [Key(5)]
         public long SectionBaseScore { get; set; }
 
         /// <summary>
-        /// TODO : ...
+        /// The sum of all previous combo section final scores.
         /// </summary>
+        /// <remarks>
+        /// This excludes the current combo section, as it has not been finalized yet.
+        /// </remarks>
         [Key(6)]
         public double ComboScore { get; set; }
 

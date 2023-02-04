@@ -57,13 +57,20 @@ namespace osu.Game.Rulesets.Scoring
         public readonly BindableInt Combo = new BindableInt();
 
         /// <summary>
-        /// TODO : ...
+        /// A given combo section is defined as the section in which the combo has not been broken.
+        /// In other words: combo sections are sections which are in between combo breaks, beginning of the play, and, or end of the play.
+        /// </summary>
+        /// <summary>
+        /// The sum of all base judgements in the current combo section.
         /// </summary>
         public readonly BindableLong SectionBaseScore = new BindableLong();
 
         /// <summary>
-        /// TODO : ...
+        /// A list of all previous scores given to previous combo sections.
         /// </summary>
+        /// <remarks>
+        /// This list is specifically used when reverting hit results for scrolling back through replays.
+        /// </remarks>
         public IReadOnlyList<double> SectionComboScores => sectionComboScores;
 
         /// <summary>
@@ -231,7 +238,8 @@ namespace osu.Game.Rulesets.Scoring
 
             if (result.Type.IncreasesCombo())
                 Combo.Value++;
-            else if (result.Type.BreaksCombo()) {
+            else if (result.Type.BreaksCombo())
+            {
                 double sectionComboScore = (SectionBaseScore.Value * Math.Pow(Combo.Value, DefaultComboExponent));
                 currentScoringValues.ComboScore += sectionComboScore;
                 sectionComboScores.Add(sectionComboScore);
@@ -289,8 +297,9 @@ namespace osu.Game.Rulesets.Scoring
 
             if (!result.Type.IsScorable())
                 return;
-            
-            if (result.Type.BreaksCombo()) {
+
+            if (result.Type.BreaksCombo())
+            {
                 sectionComboScores.RemoveAt(sectionComboScores.Count() - 1);
                 currentScoringValues.ComboScore = sectionComboScores.Sum();
             }

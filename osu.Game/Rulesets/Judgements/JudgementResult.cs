@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Judgements
         public int ComboAtJudgement { get; internal set; }
 
         /// <summary>
-        /// TODO : ...
+        /// The sum of all base judgments in the current combo section prior to this <see cref="JudgementResult"/> occurring.
         /// </summary>
         public long SectionBaseScoreAtJudgement { get; internal set; }
 
