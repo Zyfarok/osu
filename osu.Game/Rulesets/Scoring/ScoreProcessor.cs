@@ -413,7 +413,7 @@ namespace osu.Game.Rulesets.Scoring
                     // This gives a similar feeling to osu!stable scoring (ScoreV1) while keeping classic scoring as only a constant multiple of standardised scoring.
                     // The invariant is important to ensure that scores don't get re-ordered on leaderboards between the two scoring modes.
                     double scaledRawScore = rawScore / max_score;
-                    return (long)Math.Round(Math.Pow(scaledRawScore * Math.Max(1, totalBasicHitObjects), 2) * ClassicScoreMultiplier);
+                    return (long)Math.Round(scaledRawScore * Math.Pow(Math.Max(1, totalBasicHitObjects), 2) * ClassicScoreMultiplier);
             }
         }
 
