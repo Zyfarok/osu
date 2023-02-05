@@ -50,9 +50,14 @@ namespace osu.Game.Rulesets.Judgements
         public int ComboAtJudgement { get; internal set; }
 
         /// <summary>
-        /// TODO : ...
+        /// The <see cref="ScoreProcessor.SectionBaseScore"/> prior to this <see cref="JudgementResult"/> occurring.
         /// </summary>
         public long SectionBaseScoreAtJudgement { get; internal set; }
+
+        /// <summary>
+        /// The <see cref="ScoreProcessor.ComboScoreAtLastBreak"/> prior to this <see cref="JudgementResult"/> occurring.
+        /// </summary>
+        public long ComboScoreAtLastBreak { get; internal set; }
 
         /// <summary>
         /// The highest combo achieved prior to this <see cref="JudgementResult"/> occurring.

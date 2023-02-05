@@ -45,13 +45,13 @@ namespace osu.Game.Online.Spectator
         public DateTimeOffset ReceivedTime { get; set; }
 
         /// <summary>
-        /// TODO : ...
+        /// The current <see cref="ScoreProcessor.SectionBaseScore"/> of the score.
         /// </summary>
         [Key(5)]
         public long SectionBaseScore { get; set; }
 
         /// <summary>
-        /// TODO : ...
+        /// The current <see cref="ScoreProcessor.ScoringValues.ComboScore"/> of the score.
         /// </summary>
         [Key(6)]
         public double ComboScore { get; set; }
