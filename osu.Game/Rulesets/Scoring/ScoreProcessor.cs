@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Scoring
         /// <summary>
         /// Portion of <see cref="ScoringValues.BaseScore"/> since last combo break (or start of the map if still in full combo).
         /// </summary>
-        public readonly BindableLong SectionBaseScore = new BindableLong();
+        public readonly BindableLong BaseScoreSinceLastBreak = new BindableLong();
 
         /// <summary>
         /// The value of <see cref="ScoringValues.ComboScore"/> at the last combo-break. Defaults to 0.
@@ -207,7 +207,7 @@ namespace osu.Game.Rulesets.Scoring
         protected sealed override void ApplyResultInternal(JudgementResult result)
         {
             result.ComboAtJudgement = Combo.Value;
-            result.SectionBaseScoreAtJudgement = SectionBaseScore.Value;
+            result.BaseScoreSinceLastBreak = BaseScoreSinceLastBreak.Value;
             result.HighestComboAtJudgement = HighestCombo.Value;
 
             if (result.FailedAtJudgement)
@@ -226,7 +226,7 @@ namespace osu.Game.Rulesets.Scoring
                 return;
 
             if (!result.Type.IsBonus())
-                SectionBaseScore.Value += result.Type.IsHit() ? Judgement.ToNumericResult(result.Type) : 0;
+                BaseScoreSinceLastBreak.Value += result.Type.IsHit() ? Judgement.ToNumericResult(result.Type) : 0;
 
             if (result.Type.IncreasesCombo())
                 Combo.Value++;
@@ -234,14 +234,14 @@ namespace osu.Game.Rulesets.Scoring
             {
                 ComboScoreAtLastBreak.Value = currentScoringValues.ComboScore;
                 Combo.Value = 0;
-                SectionBaseScore.Value = 0;
+                BaseScoreSinceLastBreak.Value = 0;
             }
 
             applyResult(result.Type, ref currentScoringValues);
             currentScoringValues.MaxCombo = HighestCombo.Value;
 
             currentScoringValues.ComboScore =
-                computeComboScore(ComboScoreAtLastBreak.Value, SectionBaseScore.Value, Combo.Value);
+                computeComboScore(ComboScoreAtLastBreak.Value, BaseScoreSinceLastBreak.Value, Combo.Value);
 
             hitEvents.Add(CreateHitEvent(result));
             lastHitObject = result.HitObject;
@@ -264,7 +264,7 @@ namespace osu.Game.Rulesets.Scoring
         }
 
         /// <summary>
-        /// Computes the ComboScore incrementally from <see cref="ComboScoreAtLastBreak"/>,  <see cref="SectionBaseScore"/> and <see cref="Combo"/>
+        /// Computes the ComboScore incrementally from <see cref="ComboScoreAtLastBreak"/>,  <see cref="BaseScoreSinceLastBreak"/> and <see cref="Combo"/>
         /// </summary>
         private double computeComboScore(double comboScoreAtLastBreak, long sectionBaseScore, int combo) {
             double sectionComboScore = (sectionBaseScore * Math.Pow(combo, DefaultComboExponent));
@@ -282,7 +282,7 @@ namespace osu.Game.Rulesets.Scoring
         protected sealed override void RevertResultInternal(JudgementResult result)
         {
             Combo.Value = result.ComboAtJudgement;
-            SectionBaseScore.Value = result.SectionBaseScoreAtJudgement;
+            BaseScoreSinceLastBreak.Value = result.BaseScoreSinceLastBreak;
             ComboScoreAtLastBreak.Value = result.ComboScoreAtLastBreak;
             HighestCombo.Value = result.HighestComboAtJudgement;
 
@@ -304,7 +304,7 @@ namespace osu.Game.Rulesets.Scoring
             currentScoringValues.MaxCombo = HighestCombo.Value;
 
             currentScoringValues.ComboScore =
-                computeComboScore(ComboScoreAtLastBreak.Value, SectionBaseScore.Value, Combo.Value);
+                computeComboScore(ComboScoreAtLastBreak.Value, BaseScoreSinceLastBreak.Value, Combo.Value);
 
             Debug.Assert(hitEvents.Count > 0);
             lastHitObject = hitEvents[^1].LastHitObject;
@@ -465,7 +465,7 @@ namespace osu.Game.Rulesets.Scoring
             TotalScore.Value = 0;
             Accuracy.Value = 1;
             Combo.Value = 0;
-            SectionBaseScore.Value = 0;
+            BaseScoreSinceLastBreak.Value = 0;
             ComboScoreAtLastBreak.Value = 0;
             Rank.Disabled = false;
             Rank.Value = ScoreRank.X;
@@ -479,6 +479,8 @@ namespace osu.Game.Rulesets.Scoring
         {
             score.Combo = Combo.Value;
             score.MaxCombo = HighestCombo.Value;
+            score.ComboScoreAtLastBreak = ComboScoreAtLastBreak.Value;
+            score.BaseScoreSinceLastBreak = BaseScoreSinceLastBreak.Value;
             score.Accuracy = Accuracy.Value;
             score.Rank = Rank.Value;
             score.HitEvents = hitEvents;
@@ -493,6 +495,7 @@ namespace osu.Game.Rulesets.Scoring
 
             // Populate total score after everything else.
             score.TotalScore = ComputeScore(ScoringMode.Standardised, score);
+            score.ComboScore = currentScoringValues.ComboScore;
         }
 
         /// <summary>
@@ -519,14 +522,16 @@ namespace osu.Game.Rulesets.Scoring
             extractScoringValues(frame.Header.Statistics, out var current, out var maximum);
             currentScoringValues.BaseScore = current.BaseScore;
             currentScoringValues.MaxCombo = frame.Header.MaxCombo;
-            currentScoringValues.ComboScore = frame.Header.ComboScore;
+
             currentMaximumScoringValues.BaseScore = maximum.BaseScore;
             currentMaximumScoringValues.MaxCombo = maximum.MaxCombo;
             currentMaximumScoringValues.ComboScore =
                 computeComboScore(0, currentMaximumScoringValues.BaseScore, currentMaximumScoringValues.MaxCombo);
 
             Combo.Value = frame.Header.Combo;
-            SectionBaseScore.Value = frame.Header.SectionBaseScore;
+            BaseScoreSinceLastBreak.Value = frame.Header.BaseScoreSinceLastBreak;
+            ComboScoreAtLastBreak.Value = frame.Header.ComboScoreAtLastBreak;
+            currentScoringValues.ComboScore = computeComboScore(ComboScoreAtLastBreak.Value, BaseScoreSinceLastBreak.Value, Combo.Value);
             HighestCombo.Value = frame.Header.MaxCombo;
 
             scoreResultCounts.Clear();
@@ -563,6 +568,7 @@ namespace osu.Game.Rulesets.Scoring
         {
             extractScoringValues(scoreInfo.Statistics, out current, out currentMaximum);
             current.MaxCombo = scoreInfo.MaxCombo;
+            current.ComboScore = scoreInfo.ComboScore;
 
             if (scoreInfo.MaximumStatistics.Count > 0)
                 extractScoringValues(scoreInfo.MaximumStatistics, out _, out maximum);

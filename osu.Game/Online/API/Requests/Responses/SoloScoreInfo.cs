@@ -33,6 +33,9 @@ namespace osu.Game.Online.API.Requests.Responses
         [JsonProperty("total_score")]
         public long TotalScore { get; set; }
 
+        [JsonProperty("combo_score")]
+        public double ComboScore { get; set; }
+
         [JsonProperty("accuracy")]
         public double Accuracy { get; set; }
 
@@ -183,6 +186,7 @@ namespace osu.Game.Online.API.Requests.Responses
                 Ruleset = new RulesetInfo { OnlineID = RulesetID },
                 Passed = Passed,
                 TotalScore = TotalScore,
+                ComboScore = ComboScore,
                 Accuracy = Accuracy,
                 MaxCombo = MaxCombo,
                 Rank = Rank,
@@ -214,6 +218,7 @@ namespace osu.Game.Online.API.Requests.Responses
         {
             Rank = score.Rank,
             TotalScore = score.TotalScore,
+            ComboScore = score.ComboScore,
             Accuracy = score.Accuracy,
             PP = score.PP,
             MaxCombo = score.MaxCombo,

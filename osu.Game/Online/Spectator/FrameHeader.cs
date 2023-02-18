@@ -45,16 +45,16 @@ namespace osu.Game.Online.Spectator
         public DateTimeOffset ReceivedTime { get; set; }
 
         /// <summary>
-        /// The current <see cref="ScoreProcessor.SectionBaseScore"/> of the score.
+        /// The current <see cref="ScoreProcessor.BaseScoreSinceLastBreak"/> of the score.
         /// </summary>
         [Key(5)]
-        public long SectionBaseScore { get; set; }
+        public long BaseScoreSinceLastBreak { get; set; }
 
         /// <summary>
-        /// The current <see cref="ScoreProcessor.ScoringValues.ComboScore"/> of the score.
+        /// The current <see cref="ScoreProcessor.ComboScoreAtLastBreak"/> of the score.
         /// </summary>
         [Key(6)]
-        public double ComboScore { get; set; }
+        public double ComboScoreAtLastBreak { get; set; }
 
         /// <summary>
         /// Construct header summary information from a point-in-time reference to a score which is actively being played.
@@ -65,6 +65,8 @@ namespace osu.Game.Online.Spectator
             Combo = score.Combo;
             MaxCombo = score.MaxCombo;
             Accuracy = score.Accuracy;
+            BaseScoreSinceLastBreak = score.BaseScoreSinceLastBreak;
+            ComboScoreAtLastBreak = score.ComboScoreAtLastBreak;
 
             // copy for safety
             Statistics = new Dictionary<HitResult, int>(score.Statistics);
@@ -72,11 +74,13 @@ namespace osu.Game.Online.Spectator
 
         [JsonConstructor]
         [SerializationConstructor]
-        public FrameHeader(double accuracy, int combo, int maxCombo, Dictionary<HitResult, int> statistics, DateTimeOffset receivedTime)
+        public FrameHeader(double accuracy, int combo, int maxCombo, long baseScoreSinceLastBreak, double comboScoreAtLastBreak, Dictionary<HitResult, int> statistics, DateTimeOffset receivedTime)
         {
             Combo = combo;
             MaxCombo = maxCombo;
             Accuracy = accuracy;
+            BaseScoreSinceLastBreak = baseScoreSinceLastBreak;
+            ComboScoreAtLastBreak = comboScoreAtLastBreak;
             Statistics = statistics;
             ReceivedTime = receivedTime;
         }

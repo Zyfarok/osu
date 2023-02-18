@@ -41,6 +41,12 @@ namespace osu.Game.Scoring
 
         public long TotalScore { get; set; }
 
+        public long BaseScoreSinceLastBreak { get; set; }
+
+        public double ComboScoreAtLastBreak { get; set; }
+
+        public double ComboScore { get; set; }
+
         public int MaxCombo { get; set; }
 
         public double Accuracy { get; set; }

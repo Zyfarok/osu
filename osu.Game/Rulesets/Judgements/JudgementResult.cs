@@ -50,9 +50,9 @@ namespace osu.Game.Rulesets.Judgements
         public int ComboAtJudgement { get; internal set; }
 
         /// <summary>
-        /// The <see cref="ScoreProcessor.SectionBaseScore"/> prior to this <see cref="JudgementResult"/> occurring.
+        /// The <see cref="ScoreProcessor.BaseScoreSinceLastBreak"/> prior to this <see cref="JudgementResult"/> occurring.
         /// </summary>
-        public long SectionBaseScoreAtJudgement { get; internal set; }
+        public long BaseScoreSinceLastBreak { get; internal set; }
 
         /// <summary>
         /// The <see cref="ScoreProcessor.ComboScoreAtLastBreak"/> prior to this <see cref="JudgementResult"/> occurring.
