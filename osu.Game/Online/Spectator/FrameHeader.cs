@@ -72,15 +72,16 @@ namespace osu.Game.Online.Spectator
             Statistics = new Dictionary<HitResult, int>(score.Statistics);
         }
 
+        // TODO : re-add BaseScoreSinceLastBreak and ComboScoreAtLastBreak to signature once osu-web has been updated accordingly
         [JsonConstructor]
         [SerializationConstructor]
-        public FrameHeader(double accuracy, int combo, int maxCombo, long baseScoreSinceLastBreak, double comboScoreAtLastBreak, Dictionary<HitResult, int> statistics, DateTimeOffset receivedTime)
+        public FrameHeader(double accuracy, int combo, int maxCombo, Dictionary<HitResult, int> statistics, DateTimeOffset receivedTime)
         {
             Combo = combo;
             MaxCombo = maxCombo;
             Accuracy = accuracy;
-            BaseScoreSinceLastBreak = baseScoreSinceLastBreak;
-            ComboScoreAtLastBreak = comboScoreAtLastBreak;
+            // BaseScoreSinceLastBreak = baseScoreSinceLastBreak;
+            // ComboScoreAtLastBreak = comboScoreAtLastBreak;
             Statistics = statistics;
             ReceivedTime = receivedTime;
         }
