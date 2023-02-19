@@ -105,12 +105,12 @@ namespace osu.Game.Rulesets.Scoring
         /// <summary>
         /// The default exponent applied to combo in the computation of the combo portion of the score. Defaults to 0.5.
         /// </summary>
-        protected virtual double DefaultComboExponent => 0.5;
+        protected virtual double DefaultComboExponent => 0.4;
 
         /// <summary>
         /// The default exponent applied to the accuracy ratio used in the accuracy portion of the score. Defaults to 5.
         /// </summary>
-        protected virtual double DefaultAccuracyExponent => 5;
+        protected virtual double DefaultAccuracyExponent => 3;
 
         /// <summary>
         /// An arbitrary multiplier to scale scores in the <see cref="ScoringMode.Classic"/> scoring mode.
@@ -404,9 +404,10 @@ namespace osu.Game.Rulesets.Scoring
         [Pure]
         public long ComputeScore(ScoringMode mode, double accuracyRatio, double comboRatio, long bonusScore, int totalBasicHitObjects, double progress)
         {
-            double accuracyScore = accuracyPortion * Math.Pow(accuracyRatio, DefaultAccuracyExponent) * progress;
-            double comboScore = comboPortion * comboRatio;
-            double rawScore = (max_score * (accuracyScore + comboScore) + bonusScore) * scoreMultiplier;
+            // double accuracyScore = accuracyPortion * Math.Pow(accuracyRatio, DefaultAccuracyExponent) * progress;
+            // double comboScore = comboPortion * comboRatio;
+            // double rawScore = (max_score * (accuracyScore + comboScore) + bonusScore) * scoreMultiplier;
+            double rawScore = (max_score * (Math.Pow(accuracyRatio, DefaultAccuracyExponent) * comboRatio) + bonusScore) * scoreMultiplier;
 
             switch (mode)
             {
