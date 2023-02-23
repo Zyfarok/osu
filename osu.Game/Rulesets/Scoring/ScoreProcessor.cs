@@ -267,9 +267,9 @@ namespace osu.Game.Rulesets.Scoring
         /// <summary>
         /// Computes the ComboScore incrementally from <see cref="ComboScoreAtLastBreak"/>,  <see cref="BaseScoreSinceLastBreak"/> and <see cref="Combo"/>
         /// </summary>
-        private double computeComboScore(double comboScoreAtLastBreak, long sectionBaseScore, int combo) {
-            double sectionComboScore = (sectionBaseScore * Math.Pow(combo, comboExponent));
-            return comboScoreAtLastBreak + sectionComboScore;
+        private double computeComboScore(double comboScoreAtLastBreak, long baseScoreSinceLastBreak, int combo) {
+            double comboScoreSinceLastBreak = (baseScoreSinceLastBreak * Math.Pow(combo, comboExponent));
+            return comboScoreAtLastBreak + comboScoreSinceLastBreak;
         }
 
         /// <summary>
