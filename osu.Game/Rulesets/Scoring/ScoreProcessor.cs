@@ -93,24 +93,19 @@ namespace osu.Game.Rulesets.Scoring
         public IReadOnlyList<HitEvent> HitEvents => hitEvents;
 
         /// <summary>
-        /// The default portion of <see cref="max_score"/> awarded for hitting <see cref="HitObject"/>s accurately. Defaults to 30%.
+        /// The default portion of <see cref="max_score"/> that accounts for combos. Defaults to 100%.
         /// </summary>
-        protected virtual double DefaultAccuracyPortion => 0.3;
+        protected virtual double DefaultComboPortion => 1;
 
         /// <summary>
-        /// The default portion of <see cref="max_score"/> awarded for achieving a high combo. Default to 70%.
-        /// </summary>
-        protected virtual double DefaultComboPortion => 0.7;
-
-        /// <summary>
-        /// The default exponent applied to combo in the computation of the combo portion of the score. Defaults to 0.5.
+        /// The default exponent applied to combo in the computation of the combo portion of the score. Defaults to 0.4.
         /// </summary>
         protected virtual double DefaultComboExponent => 0.4;
 
         /// <summary>
-        /// The default exponent applied to the accuracy ratio used in the accuracy portion of the score. Defaults to 5.
+        /// The default exponent applied to the accuracy ratio used to multiply the combined score. Defaults to 2.
         /// </summary>
-        protected virtual double DefaultAccuracyExponent => 3;
+        protected virtual double DefaultAccuracyExponent => 2;
 
         /// <summary>
         /// An arbitrary multiplier to scale scores in the <see cref="ScoringMode.Classic"/> scoring mode.
@@ -122,8 +117,9 @@ namespace osu.Game.Rulesets.Scoring
         /// </summary>
         public readonly Ruleset Ruleset;
 
-        private readonly double accuracyPortion;
         private readonly double comboPortion;
+        private readonly double comboExponent;
+        private readonly double accuracyExponent;
 
         public Dictionary<HitResult, int> MaximumStatistics
         {
@@ -172,11 +168,16 @@ namespace osu.Game.Rulesets.Scoring
         {
             Ruleset = ruleset;
 
-            accuracyPortion = DefaultAccuracyPortion;
             comboPortion = DefaultComboPortion;
+            comboExponent = DefaultComboExponent;
+            accuracyExponent = DefaultAccuracyExponent;
 
-            if (!Precision.AlmostEquals(1.0, accuracyPortion + comboPortion))
-                throw new InvalidOperationException($"{nameof(DefaultAccuracyPortion)} + {nameof(DefaultComboPortion)} must equal 1.");
+            if (comboPortion < 0 || comboPortion > 1)
+                throw new InvalidOperationException($"{nameof(DefaultComboPortion)} should be between 0 and 1.");
+            if (comboExponent < 0)
+                throw new InvalidOperationException($"{nameof(DefaultComboExponent)} should be strictly positive.");
+            if (accuracyExponent <= 0)
+                throw new InvalidOperationException($"{nameof(DefaultAccuracyExponent)} should be positive.");
 
             Combo.ValueChanged += combo => HighestCombo.Value = Math.Max(HighestCombo.Value, combo.NewValue);
             Accuracy.ValueChanged += accuracy =>
@@ -267,7 +268,7 @@ namespace osu.Game.Rulesets.Scoring
         /// Computes the ComboScore incrementally from <see cref="ComboScoreAtLastBreak"/>,  <see cref="BaseScoreSinceLastBreak"/> and <see cref="Combo"/>
         /// </summary>
         private double computeComboScore(double comboScoreAtLastBreak, long sectionBaseScore, int combo) {
-            double sectionComboScore = (sectionBaseScore * Math.Pow(combo, DefaultComboExponent));
+            double sectionComboScore = (sectionBaseScore * Math.Pow(combo, comboExponent));
             return comboScoreAtLastBreak + sectionComboScore;
         }
 
@@ -404,10 +405,10 @@ namespace osu.Game.Rulesets.Scoring
         [Pure]
         public long ComputeScore(ScoringMode mode, double accuracyRatio, double comboRatio, long bonusScore, int totalBasicHitObjects, double progress)
         {
-            // double accuracyScore = accuracyPortion * Math.Pow(accuracyRatio, DefaultAccuracyExponent) * progress;
-            // double comboScore = comboPortion * comboRatio;
-            // double rawScore = (max_score * (accuracyScore + comboScore) + bonusScore) * scoreMultiplier;
-            double rawScore = (max_score * (Math.Pow(accuracyRatio, DefaultAccuracyExponent) * comboRatio) + bonusScore) * scoreMultiplier;
+            double accuracyScore = (1 - comboPortion) * accuracyRatio * progress;
+            double comboScore = comboPortion * comboRatio;
+            double combinedScore = (accuracyScore + comboScore) * Math.Pow(accuracyRatio, accuracyExponent);
+            double rawScore = (max_score * combinedScore + bonusScore) * scoreMultiplier;
 
             switch (mode)
             {

@@ -14,8 +14,6 @@ namespace osu.Game.Rulesets.Mania.Scoring
         {
         }
 
-        protected override double DefaultAccuracyPortion => 0.99;
-
         protected override double DefaultComboPortion => 0.01;
 
         protected override double ClassicScoreMultiplier => 16;
