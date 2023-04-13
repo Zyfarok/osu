@@ -14,6 +14,8 @@ namespace osu.Game.Rulesets.Taiko.Scoring
         {
         }
 
+        protected override double DefaultAccuracyPortion => 0.75;
+
         protected override double DefaultComboPortion => 0.25;
 
         protected override double ClassicScoreMultiplier => 22;
